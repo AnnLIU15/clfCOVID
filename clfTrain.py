@@ -8,12 +8,14 @@ from torch.nn import CrossEntropyLoss
 from torch.optim import Adam
 from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
 from torch.utils.data import DataLoader
-from tqdm import tqdm
 from torchsummary import summary
+from tqdm import tqdm
+
 from clfConfig import getConfig
 from datasets.clfDataSet import clfDataSet
 from models.EfficientNet import EfficientNet
 from models.EfficientNetV2 import efficientnetv2_s
+from models.resnet import resnet18
 
 
 def train(model, train_loader, optimizer, device, radiomics_require=False):
@@ -33,17 +35,17 @@ def train(model, train_loader, optimizer, device, radiomics_require=False):
     return epoch_loss
 
 
-def val(model, train_loader, device, radiomics_require=False):
+def val(model, val_loader, device, radiomics_require=False):
     epoch_loss = 0
     model.eval()
     with torch.no_grad():
-        for idx, (imgs, labels, radiomics_data, _) in tqdm(enumerate(train_loader), desc='Train', total=len(train_loader)):
+        for idx, (imgs, labels, radiomics_data, _) in tqdm(enumerate(val_loader), desc='Train', total=len(val_loader)):
             imgs, labels = imgs.to(device), labels.to(device)
             predict_label = model(imgs)
             loss = CrossEntropyLoss()(predict_label, labels)
             epoch_loss += loss.clone().detach().cpu().numpy()
             torch.cuda.empty_cache()
-    epoch_loss = epoch_loss / len(train_loader)
+    epoch_loss = epoch_loss / len(val_loader)
     return epoch_loss
 
 
@@ -72,9 +74,11 @@ def main(args):
     torch.cuda.manual_seed_all(0)
 
     print('===>Setup Model')
-    model = EfficientNet(tf=1, in_channels=1,
-                         num_class=num_classes).to(device)
-    a=summary(model=model,input_size=(1,512,512),batch_size=4,device='cuda')
+    # model = EfficientNet(tf=1, in_channels=1,
+    #                      num_class=num_classes).to(device)
+    model = resnet18(pretrained=False, num_classes=num_classes).to(device)
+    a = summary(model=model, input_size=(
+        1, 512, 512), batch_size=4, device='cuda')
     # model=efficientnetv2_s(in_channels=1,num_classes=num_classes).to(device)
     # print('*'*30)
     # summary(model=model,input_size=(1,512,512),batch_size=4,device='cuda')
@@ -123,18 +127,18 @@ def main(args):
         train_loss = train(
             model=model, train_loader=train_data_loader, optimizer=optimizer, device=device, radiomics_require=radiomics_require)
         val_loss = val(
-            model=model, train_loader=val_data_loader, device=device, radiomics_require=radiomics_require)
+            model=model, val_loader=val_data_loader, device=device, radiomics_require=radiomics_require)
         scheduler.step()
         print('Epoch %d Train Loss:%.4f\t\t\tValidation Loss:%.4f' %
               (epoch, train_loss, val_loss))
-        if best_train_performance[1] > train_loss and train_loss > 0 and epoch > 30:
+        if best_train_performance[1] > train_loss and train_loss > 0:
             state = {'epoch': epoch, 'model_weights': model.state_dict(
             ), 'optimizer': optimizer.state_dict(), 'scheduler': scheduler.state_dict()}
             torch.save(state, os.path.join(
                 save_dir, 'best_train_model.pth'.format(epoch)))
             best_train_performance = [epoch, train_loss]
 
-        if best_val_performance[1] > val_loss and val_loss > 0 and epoch > 30:
+        if best_val_performance[1] > val_loss and val_loss > 0:
             state = {'epoch': epoch, 'model_weights': model.state_dict(
             ), 'optimizer': optimizer.state_dict(), 'scheduler': scheduler.state_dict()}
             torch.save(state, os.path.join(

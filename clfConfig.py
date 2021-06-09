@@ -6,16 +6,16 @@ def getConfig(stage):
     parser_.add_argument("--device", type=str, default='cuda')
     parser_.add_argument("--num_classes", type=int, default=3,
                          help="pic classes,3->ncov(2) cp(1) normal(0)")
-    parser_.add_argument("--model_name", type=str, default='EfficientNet')
+    parser_.add_argument("--model_name", type=str, default='resnet')
     parser_.add_argument("--pth", type=str, default=None,
                              help="训练好的pth路径，模型必须包含以下参数"
                                   "model_weights, optimizer_state")
     parser_.add_argument("--radiomics_require", type=bool, default=False)
     parser_.add_argument("--match", type=bool, default=False)
-
+    parser_.add_argument("--batch_size", type=int,
+                             default=16, help='batch_size')
     if stage == "train":
-        parser_.add_argument("--batch_size", type=int,
-                             default=4, help='batch_size')
+        
         parser_.add_argument("--start_epoch", type=str, default=1)
         parser_.add_argument("--num_epochs", type=int, default=100)
         
@@ -33,7 +33,7 @@ def getConfig(stage):
                              default=None, help='中断后继续训练记载')
     
     elif stage == "test":
-        parser_.add_argument("--test_data_dir", type=str, default='./data/seg/test/',
+        parser_.add_argument("--test_data_dir", type=str, default='./data/process_clf/test',
                              help="Path to the test data. Must contain images and may contain binary masks")
         parser_.add_argument("--save_seg", type=str,
                              default='./output/segResult/')
