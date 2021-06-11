@@ -1,7 +1,6 @@
 import argparse
 import os
 from glob import glob
-from multiprocessing import Process
 
 import numpy as np
 from tqdm import tqdm

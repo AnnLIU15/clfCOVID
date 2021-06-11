@@ -1,10 +1,6 @@
-import enum
 import os
 import re
 from glob import glob
-
-import numpy as np
-from tqdm import tqdm
 
 
 def readfileAndDel(file, f1):
