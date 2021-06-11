@@ -3,29 +3,49 @@ from collections import OrderedDict
 import numpy as np
 import torch
 import torch.nn.functional as F
-from sklearn.metrics import (accuracy_score, average_precision_score, f1_score,
-                             precision_score, recall_score,roc_curve)
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import auc,confusion_matrix, f1_score, roc_curve
 
 
 def accuary_(y_pred, y_true):
-    y_p=y_pred.reshape(-1)
-    y_t=y_true.reshape(-1)
-    return (y_p==y_t).sum()/y_p.shape[0]
+    y_p = y_pred.reshape(-1)
+    y_t = y_true.reshape(-1)
+    return (y_p == y_t).sum()/y_p.shape[0]
+
 
 def f1_score_(y_pred, y_true):
     return f1_score(y_true, y_pred, average='macro', zero_division=1),\
-            f1_score(y_true, y_pred, average='micro', zero_division=1)
+        f1_score(y_true, y_pred, average='micro', zero_division=1)
+
 
 def confusion_matrix_(y_pred, y_true):
-    return confusion_matrix(y_true.ravel(), y_pred.ravel(),labels=[0,1,2])
+    return confusion_matrix(y_true.ravel(), y_pred.ravel(), labels=[0, 1, 2])
 
-def roc_(y_pred, y_true, n_classes=3):
-    y_pred =y_pred.numpy()
-    y_true = F.one_hot(y_true.squeeze(),
+
+def roc_auc(y_pred, y_true, n_classes=3):
+    '''
+    依次为class0 ~ class(n-1) 与总micro
+    '''
+    
+    y_pred = y_pred
+    y_true = F.one_hot(torch.LongTensor(y_true).squeeze(),
                        n_classes).numpy()
-    fpr, tpr, thresholds = roc_curve(y_true,y_pred,pos_label=1)
-    print(fpr, tpr, thresholds)
+    fpr, tpr, thresholds,roc_auc_micro=[],[],[],[]
+    for var in range(n_classes):    
+        fpr_t, tpr_t, thresholds_t = roc_curve(y_true[:,var], y_pred[:,var], pos_label=1)
+        fpr.append(fpr_t), tpr.append(tpr_t), thresholds.append(thresholds_t)
+        roc_auc_micro.append(auc(fpr_t, tpr_t))
+            
+    
+    
+    fpr_t, tpr_t, thresholds_t = roc_curve(y_true.ravel(), y_pred.ravel(), pos_label=1)
+    fpr.append(fpr_t), tpr.append(tpr_t), thresholds.append(thresholds_t)
+    roc_auc_micro.append(auc(fpr_t, tpr_t))
+    fpr=np.array(fpr,dtype=object)
+    tpr=np.array(tpr,dtype=object)
+    thresholds=np.array(thresholds,dtype=object)
+    roc_auc_micro=np.array(roc_auc_micro)
+    return fpr, tpr, thresholds, roc_auc_micro
+
 
 def Mereics_score(y_pred, y_true, n_classes=3):
     import warnings
@@ -37,11 +57,11 @@ def Mereics_score(y_pred, y_true, n_classes=3):
     more Mereics_score will append in the future
     """
     mereics_dict = OrderedDict()
-    y_pred =y_pred.numpy()
+    y_pred = y_pred.numpy()
     y_true = F.one_hot(y_true.squeeze(),
                        n_classes).numpy()
     mAP = 0
-    fpr, tpr, thresholds = roc_curve(y_true,y_pred,pos_label=1)
+    fpr, tpr, thresholds = roc_curve(y_true, y_pred, pos_label=1)
 
     for idx in range(y_pred.shape[0]):
 

@@ -35,8 +35,8 @@ def getConfig(stage):
     elif stage == "test":
         parser_.add_argument("--test_data_dir", type=str, default='./data/process_clf/test',
                              help="Path to the test data. Must contain images and may contain binary masks")
-        parser_.add_argument("--save_seg", type=str,
-                             default='./output/segResult/')
+        parser_.add_argument("--save_clf", type=str,
+                             default='./output/clfResult/')
     elif stage == "infer":
         parser_.add_argument("--infer_data_dirs", type=str, nargs='+', default=['/home/e201cv/Desktop/covid_data/process_clf/train',
          '/home/e201cv/Desktop/covid_data/process_clf/val', '/home/e201cv/Desktop/covid_data/process_clf/test'],

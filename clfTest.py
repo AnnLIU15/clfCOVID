@@ -4,60 +4,59 @@ import time
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
-from torchsummary import summary
 from tqdm import tqdm
 
 from clfConfig import getConfig
 from datasets.clfDataSet import clfDataSet
-from models.EfficientNet import EfficientNet
-from models.EfficientNetV2 import efficientnetv2_s
 from models.resnet import resnet18
-from utils.Metrics import Mereics_score, accuary_,f1_score_,confusion_matrix_,roc_
+from utils.Metrics import accuary_, confusion_matrix_, f1_score_, roc_auc
 
 
 def test(model, test_loader, device, radiomics_require=False):
-    total_accuracy = 0
-    total_f1_score_macro=0
-    total_f1_score_mirco=0
-    total_cm=np.zeros((3,3))
     model.eval()
+    labels_list = np.array([], dtype=np.uint8)
+    argmax_output_list = np.array([], dtype=np.uint8)
     with torch.no_grad():
         for idx, (imgs, labels, radiomics_data, _) in tqdm(enumerate(test_loader), desc='Train', total=len(test_loader)):
             imgs, labels = imgs.to(device), labels.to(device)
-            predict_label = model(imgs)
-            
-            roc_(torch.nn.Softmax(
-                dim=1)(predict_label).clone().detach(
-            ).cpu().numpy())
-            
-            predict_label = (torch.nn.Softmax(
-                dim=1)(predict_label)).argmax(dim=1)
-            in_predict_label, in_labels = predict_label.clone().detach(
-            ).cpu().numpy(), labels.clone().detach().cpu().numpy()
-            total_accuracy += accuary_(in_predict_label, in_labels)
-            tmp1,tmp2=f1_score_(in_predict_label, in_labels)
-            total_f1_score_macro+=tmp1
-            total_f1_score_mirco+=tmp2
-            total_cm+=confusion_matrix_(in_predict_label, in_labels)
+            output = model(imgs)
+
+            # origin label
+            labels_list = np.hstack(
+                (labels_list, labels.clone().detach().cpu().numpy().reshape(-1)))
+
+            # predict score
+            if idx == 0:
+                output_list = output.clone().detach().cpu().numpy()
+            else:
+                output_list = np.vstack(
+                    (output_list, output.clone().detach().cpu().numpy()))
+
+            # score's argmax ->0 1 2
+            argmax_output_list = np.hstack((argmax_output_list, (torch.nn.Softmax(
+                dim=1)(output)).argmax(dim=1).clone().detach().cpu().numpy().reshape(-1)))
+
+            # release cache
             torch.cuda.empty_cache()
-    total_accuracy = total_accuracy / len(test_loader)
-    total_f1_score_macro = total_f1_score_macro / len(test_loader)
+    # acquire accuracy f1-score confusion_matrix and ROC(AUC)
+    total_accuracy = accuary_(argmax_output_list, labels_list)
 
-    total_f1_score_mirco = total_f1_score_mirco / len(test_loader)
-
-    print(total_accuracy,total_f1_score_macro,total_f1_score_mirco)
-    print(total_cm)
-    exit()
-    return total_accuracy
+    total_f1_score_macro, total_f1_score_mirco = f1_score_(
+        argmax_output_list, labels_list)
+    total_cm = confusion_matrix_(argmax_output_list, labels_list)
+    fpr, tpr, thresholds, roc_auc_micro = roc_auc(output_list, labels_list, 3)
+    np.save('./output/pred.npy', argmax_output_list)
+    np.save('./output/true.npy', labels_list)
+    return fpr, tpr, thresholds, roc_auc_micro, total_accuracy, total_f1_score_macro, total_f1_score_mirco, total_cm
 
 
 def main(args):
 
     match, device, num_classes, batch_size,  model_name =\
         args.match, args.device, args.num_classes, args.batch_size, args.model_name
-    radiomics_require, pth, save_seg, test_data_dir = \
-        args.radiomics_require, args.pth, args.save_seg, args.test_data_dir
-    save_dir = save_seg+'/'+model_name
+    radiomics_require, pth, save_clf, test_data_dir = \
+        args.radiomics_require, args.pth, args.save_clf, args.test_data_dir
+    save_dir = save_clf+'/'+model_name
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     ng = torch.cuda.device_count()
@@ -91,6 +90,9 @@ def main(args):
         print('===>Loading Pretrained Model')
         checkpoint = torch.load(pth)
         model.load_state_dict(checkpoint['model_weights'])
+    else:
+        exit('no trained model')
+
     print('===>Loading dataset')
 
     require = True if (match and radiomics_require) else False
@@ -98,13 +100,24 @@ def main(args):
     test_data_loader = DataLoader(
         dataset=clfDataSet(test_data_dir, match=require), batch_size=batch_size,
         num_workers=8, shuffle=True, drop_last=False)
-    print('test_data_dir:',test_data_dir)
+    print('test_data_dir:', test_data_dir)
     print('test_data_loader data:', len(test_data_loader))
     print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
     test_begin_time = time.time()
-    val_loss = test(
+    # val_loss =
+    fpr, tpr, _, roc_auc_micro, total_accuracy, total_f1_score_macro, total_f1_score_mirco, total_cm = test(
         model=model, test_loader=test_data_loader, device=device, radiomics_require=radiomics_require)
+    roc_mt = np.vstack((fpr, tpr))
 
+    np.save(file=save_dir+'/roc.npy', arr=roc_mt)
+    np.save(file=save_dir+'/auc.npy', arr=roc_auc_micro)
+    with open(save_dir+'/metrics.txt', 'w+') as f:
+        print('accuracy', 'f1_score_macro', 'f1_score_mirco', file=f)
+        print(total_accuracy, total_f1_score_macro,
+              total_f1_score_mirco, file=f)
+
+    with open(save_dir+'/confusion_matrix.txt', 'w+') as f:
+        print(total_cm, file=f)
     print('This test cost %ds.' % (time.time()-test_begin_time))
 
 

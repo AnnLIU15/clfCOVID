@@ -2,7 +2,6 @@
 __pycache__
 data/process_clf
 output/saved_models
-output/segResult
 *.pyc
 *.exe
 *.[ao]

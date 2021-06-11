@@ -13,8 +13,6 @@ from tqdm import tqdm
 
 from clfConfig import getConfig
 from datasets.clfDataSet import clfDataSet
-from models.EfficientNet import EfficientNet
-from models.EfficientNetV2 import efficientnetv2_s
 from models.resnet import resnet18
 
 

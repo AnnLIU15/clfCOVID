@@ -2,7 +2,7 @@
 
 ## 运行环境
 
-| Version  | v0.1    20210604           |
+| Version  | v1.0    20210611           |
 | -------- | ------------------------------- |
 | 编程语言 | Python                          |
 | Cuda版本 | 10.0                            |
@@ -12,7 +12,7 @@
 
 | 网络名称     | 原始文章                                                     |
 | ------------ | ------------------------------------------------------------ |
-| EfficientNet | [EfficientNetV2: Smaller Models and Faster Training](https://arxiv.org/abs/2104.00298) |
+| [ResNet18](https://github.com/pytorch/vision/blob/master/torchvision/models/resnet.py) | [Deep Residual Learning for Image Recognition](https://arxiv.org/pdf/1512.03385.pdf) |
 
 | 网络代码 |
 | -------- |
@@ -40,6 +40,10 @@ python Radiomics/exact_radiomics.py --imgs_dir data/clf/train/imgs data/clf/val/
 #### 训练1
 
 ```
-python /home/e201cv/Desktop/covid_clf/clfTrain.py --device cuda --num_classes 3 --model_name EfficientNet_s --radiomics_require False --match False --batch_size 8 --num_epochs 200
+python /home/e201cv/Desktop/covid_clf/clfTrain.py --device cuda --num_classes 3 --model_name resnet --radiomics_require False --match False --batch_size 256 --num_epochs 200
 ```
 
+#### 测试
+```
+ python clfTest.py --num_classes 3 --device cuda --pth output/saved_models/ClfBestModel.pth --batch_size 256 --radiomics_require False --test_data_dir ./data/process_clf/test --save_clf ./output/clfResult/
+```
