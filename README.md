@@ -44,3 +44,9 @@ python /home/e201cv/Desktop/covid_clf/clfTrain.py --device cuda --num_classes 3 
 ```
  python clfTest.py --num_classes 3 --device cuda --pth output/saved_models/ClfBestModel.pth --batch_size 256 --radiomics_require False --test_data_dir ./data/process_clf/test --save_clf ./output/clfResult/
 ```
+
+#### ROC曲线与具体评测效果显示
+```
+python plt_roc.py
+python cmp2file.py
+```
