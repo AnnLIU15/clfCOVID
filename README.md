@@ -26,7 +26,7 @@ python ./utils/preprocessClf.py --in_dir /home/e201cv/Desktop/covid_data/clf/tra
 #### 获取掩模
 
 ```
-python infer.py --infer_data_dirs /home/e201cv/Desktop/covid_data/process_clf/train /home/e201cv/Desktop/covid_data/process_clf/val /home/e201cv/Desktop/covid_data/process_clf/test --pth output/saved_models/U2Net_n/1_20_20_2_best_in_150/epoch_150_model.pth --num_classes 3 --device cuda
+python infer.py --infer_data_dirs /home/e201cv/Desktop/covid_data/process_clf/train /home/e201cv/Desktop/covid_data/process_clf/val /home/e201cv/Desktop/covid_data/process_clf/test --pth /home/e201cv/Desktop/covid_seg/output/saved_models/U2Net/bestSeg.pth --num_classes 3 --device cuda
 ```
 
 #### 获取影像组学
