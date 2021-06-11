@@ -68,11 +68,12 @@ class clfDataSet(Dataset):
         imgs_path_dir = self.dataset_path+'/imgs'
         radiomics_path_dir = self.dataset_path+'/radiomics'
         imgs_pic, imgs_name = getImage(imgs_path_dir)
-        print('imgs dir:',imgs_path_dir,'imgs_num:',len(imgs_name))
+        print('imgs dir:', imgs_path_dir, 'imgs_num:', len(imgs_name))
         radiomics_path = sorted(glob(radiomics_path_dir+'/*.npy'))
         radiomics_name = [var[len(radiomics_path_dir)+1:-4]
                           for var in radiomics_path]
-        print('radiomics dir:',radiomics_path_dir,'radiomics num:',len(radiomics_name))
+        print('radiomics dir:', radiomics_path_dir,
+              'radiomics num:', len(radiomics_name))
         if self.match:
             sum_of_error = 0
             try:

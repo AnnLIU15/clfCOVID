@@ -3,7 +3,7 @@ from collections import OrderedDict
 import numpy as np
 import torch
 import torch.nn.functional as F
-from sklearn.metrics import auc,confusion_matrix, f1_score, roc_curve
+from sklearn.metrics import auc, confusion_matrix, f1_score, roc_curve
 
 
 def accuary_(y_pred, y_true):
@@ -25,25 +25,25 @@ def roc_auc(y_pred, y_true, n_classes=3):
     '''
     依次为class0 ~ class(n-1) 与总micro
     '''
-    
+
     y_pred = y_pred
     y_true = F.one_hot(torch.LongTensor(y_true).squeeze(),
                        n_classes).numpy()
-    fpr, tpr, thresholds,roc_auc_micro=[],[],[],[]
-    for var in range(n_classes):    
-        fpr_t, tpr_t, thresholds_t = roc_curve(y_true[:,var], y_pred[:,var], pos_label=1)
+    fpr, tpr, thresholds, roc_auc_micro = [], [], [], []
+    for var in range(n_classes):
+        fpr_t, tpr_t, thresholds_t = roc_curve(
+            y_true[:, var], y_pred[:, var], pos_label=1)
         fpr.append(fpr_t), tpr.append(tpr_t), thresholds.append(thresholds_t)
         roc_auc_micro.append(auc(fpr_t, tpr_t))
-            
-    
-    
-    fpr_t, tpr_t, thresholds_t = roc_curve(y_true.ravel(), y_pred.ravel(), pos_label=1)
+
+    fpr_t, tpr_t, thresholds_t = roc_curve(
+        y_true.ravel(), y_pred.ravel(), pos_label=1)
     fpr.append(fpr_t), tpr.append(tpr_t), thresholds.append(thresholds_t)
     roc_auc_micro.append(auc(fpr_t, tpr_t))
-    fpr=np.array(fpr,dtype=object)
-    tpr=np.array(tpr,dtype=object)
-    thresholds=np.array(thresholds,dtype=object)
-    roc_auc_micro=np.array(roc_auc_micro)
+    fpr = np.array(fpr, dtype=object)
+    tpr = np.array(tpr, dtype=object)
+    thresholds = np.array(thresholds, dtype=object)
+    roc_auc_micro = np.array(roc_auc_micro)
     return fpr, tpr, thresholds, roc_auc_micro
 
 
