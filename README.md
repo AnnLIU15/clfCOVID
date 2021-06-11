@@ -14,9 +14,6 @@
 | ------------ | ------------------------------------------------------------ |
 | [ResNet18](https://github.com/pytorch/vision/blob/master/torchvision/models/resnet.py) | [Deep Residual Learning for Image Recognition](https://arxiv.org/pdf/1512.03385.pdf) |
 
-| 网络代码 |
-| -------- |
-|          |
 
 ### 1. 分类(先看分割代码)
 
