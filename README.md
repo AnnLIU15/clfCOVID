@@ -50,3 +50,8 @@ python /home/e201cv/Desktop/covid_clf/clfTrain.py --device cuda --num_classes 3 
 python plt_roc.py
 python cmp2file.py
 ```
+
+#### log
+```
+tensorboard --logdir='log/clf/resnet0607-1902'
+```
