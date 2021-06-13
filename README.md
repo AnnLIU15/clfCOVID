@@ -55,3 +55,8 @@ python cmp2file.py
 ```
 tensorboard --logdir='log/clf/resnet0607-1902'
 ```
+
+#### 外源测试
+```
+python extendTest.py --num_classes 3 --device cuda --pth output/saved_models/ClfBestModel.pth --batch_size 1 --test_data_dir ./data/extend --save_clf ./output/clfResult/ --model_name resnet_ex
+```

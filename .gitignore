@@ -1,7 +1,9 @@
 .vscode
 __pycache__
 data/process_clf
+data/extend
 output/saved_models
+*.npy
 *.pyc
 *.exe
 *.[ao]
