@@ -121,5 +121,8 @@ def main(args):
 
 
 if __name__ == '__main__':
+    '''
+    相当于infer，具体看test注释
+    '''
     args = getConfig('test')
     main(args)

@@ -24,24 +24,25 @@ def getConfig(stage):
         parser_.add_argument("--save_dir", type=str, default="./output/saved_models",
                              help="Directory to save checkpoints")
         parser_.add_argument("--train_data_dir", type=str, default='./data/process_clf/train',
-                             help="Path to the training data. Must contain images and binary masks")
+                             help="Path to the training data.")
         parser_.add_argument("--val_data_dir", type=str, default='./data/process_clf/val',
-                             help="Path to the validation data. Must contain images and binary masks")
+                             help="Path to the validation data.")
         # parser_.add_argument("--batch_size", type=int, default=8, help="Implemented only for batch size = 1")
         parser_.add_argument("--save_every", type=int, default=10)
         parser_.add_argument("--lrate", type=float,
-                             default=1e-3, help="initial Learning rate")
+                             default=1e-3, help="init Learning rate")
         parser_.add_argument('--log_name', type=str,
                              default=None, help='中断后继续训练记载')
 
     elif stage == "test":
         parser_.add_argument("--test_data_dir", type=str, default='./data/process_clf/test',
-                             help="Path to the test data. Must contain images and may contain binary masks")
+                             help="Path to the test data.")
         parser_.add_argument("--save_clf", type=str,
                              default='./output/clfResult/')
     elif stage == "infer":
         parser_.add_argument("--infer_data_dirs", type=str, nargs='+', default=['/home/e201cv/Desktop/covid_data/process_clf/train',
-                                                                                '/home/e201cv/Desktop/covid_data/process_clf/val', '/home/e201cv/Desktop/covid_data/process_clf/test'],
-                             help="Path to the test data. Must contain images and may contain binary masks")
+                                                                                '/home/e201cv/Desktop/covid_data/process_clf/val', 
+                                                                                '/home/e201cv/Desktop/covid_data/process_clf/test'],
+                             help="Path to the test data.")
     model_args = parser_.parse_args()
     return model_args

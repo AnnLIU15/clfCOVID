@@ -48,11 +48,17 @@ def val(model, val_loader, device, radiomics_require=False):
 
 
 def main(args):
-
+    '''
+    loading arguements
+    '''
     match, device, lrate, num_classes, num_epochs, log_name, batch_size,  model_name =\
         args.match, args.device, args.lrate, args.num_classes, args.num_epochs, args.log_name, args.batch_size, args.model_name
     radiomics_require, pth, save_dir, save_every, start_epoch, train_data_dir, val_data_dir = \
         args.radiomics_require, args.pth, args.save_dir, args.save_every, args.start_epoch, args.train_data_dir, args.val_data_dir
+    
+    '''
+    dir of saving result
+    '''
     save_dir = save_dir+'/'+model_name
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
@@ -72,14 +78,9 @@ def main(args):
     torch.cuda.manual_seed_all(0)
 
     print('===>Setup Model')
-    # model = EfficientNet(tf=1, in_channels=1,
-    #                      num_class=num_classes).to(device)
     model = resnet18(pretrained=False, num_classes=num_classes).to(device)
-    a = summary(model=model, input_size=(
+    summary(model=model, input_size=(
         1, 512, 512), batch_size=4, device='cuda')
-    # model=efficientnetv2_s(in_channels=1,num_classes=num_classes).to(device)
-    # print('*'*30)
-    # summary(model=model,input_size=(1,512,512),batch_size=4,device='cuda')
 
     print('===>Setting optimizer and scheduler')
     optimizer = Adam(model.parameters(), lr=lrate, weight_decay=1e-3)
@@ -102,7 +103,9 @@ def main(args):
     else:
         writer = SummaryWriter('./log/clf/'+log_name)
     print('===>Loading dataset')
-
+    '''
+    whether use radiomics_data
+    '''
     require = True if (match and radiomics_require) else False
 
     train_data_loader = DataLoader(
@@ -122,6 +125,9 @@ def main(args):
               '\nlr={}\tweight_decay={}'.format(optimizer.state_dict()['param_groups'][0]['lr'],
                                                 optimizer.state_dict()['param_groups'][0]['weight_decay']))
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+        '''
+        train and val
+        '''
         train_loss = train(
             model=model, train_loader=train_data_loader, optimizer=optimizer, device=device, radiomics_require=radiomics_require)
         val_loss = val(
@@ -129,6 +135,9 @@ def main(args):
         scheduler.step()
         print('Epoch %d Train Loss:%.4f\t\t\tValidation Loss:%.4f' %
               (epoch, train_loss, val_loss))
+        '''
+        save the model if it satisfied the conditions
+        '''
         if best_train_performance[1] > train_loss and train_loss > 0:
             state = {'epoch': epoch, 'model_weights': model.state_dict(
             ), 'optimizer': optimizer.state_dict(), 'scheduler': scheduler.state_dict()}

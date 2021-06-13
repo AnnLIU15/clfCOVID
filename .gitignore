@@ -5,6 +5,7 @@ data/extend
 output/saved_models
 *.npy
 *.pyc
+*.npy
 *.exe
 *.[ao]
 output/saved_models
@@ -16,7 +17,7 @@ __pycache__/
 log
 # C extensions
 *.so
-
+data/process_clf_is_data_process_clf
 # Distribution / packaging
 .Python
 build/

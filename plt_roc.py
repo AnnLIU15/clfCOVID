@@ -18,6 +18,7 @@ def main(args):
     plt.xlabel('fpr')
     plt.ylabel('tpr')
     plt.title('multiclass ROC curve')
+    # 绘制ROC曲线
     for i in range(f_tpr.shape[1]):
         print(f_tpr[0, i].shape)
         plt.plot(f_tpr[0, i], f_tpr[1, i], color_list[i],
@@ -26,7 +27,7 @@ def main(args):
     mean_tpr = np.zeros_like(all_fpr)
     for i in range(f_tpr.shape[1]-1):
         mean_tpr += interp(all_fpr, f_tpr[0, i], f_tpr[1, i])
-    # Finally average it and compute AUC
+    # Finally average it and compute AUC，计算Macro AUC与ROC
     mean_tpr /= f_tpr.shape[1]-1
     fpr = all_fpr
     tpr = mean_tpr
@@ -42,6 +43,9 @@ def main(args):
 
 
 if __name__ == '__main__':
+    '''
+    绘制ROC曲线，roc_path的shape必须为(2,n_classes+1)n_classes+1维度为各类的micro
+    '''
     parser_ = argparse.ArgumentParser()
     parser_.add_argument('--auc_path', type=str,
                          default='output/clfResult/resnet/auc.npy')

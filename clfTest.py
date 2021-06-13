@@ -45,6 +45,9 @@ def test(model, test_loader, device, radiomics_require=False):
         argmax_output_list, labels_list)
     total_cm = confusion_matrix_(argmax_output_list, labels_list)
     fpr, tpr, thresholds, roc_auc_micro = roc_auc(output_list, labels_list, 3)
+    '''
+    save result
+    '''
     np.save('./output/pred.npy', argmax_output_list)
     np.save('./output/true.npy', labels_list)
     return fpr, tpr, thresholds, roc_auc_micro, total_accuracy, total_f1_score_macro, total_f1_score_mirco, total_cm
@@ -122,5 +125,8 @@ def main(args):
 
 
 if __name__ == '__main__':
+    '''
+    similar to the clfTrain's comment 
+    '''
     args = getConfig('test')
     main(args)
