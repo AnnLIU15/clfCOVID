@@ -53,12 +53,21 @@ python Radiomics/exact_radiomics.py --imgs_dir data/clf/train/imgs data/clf/val/
 #### 训练1
 
 ```
-python /home/e201cv/Desktop/covid_clf/clfTrain.py --device cuda --num_classes 3 --model_name resnet --radiomics_require False --match False --batch_size 256 --num_epochs 200
+python clfTrain.py --device cuda --num_classes 3 --radiomics_require False --match False --batch_size 64 --num_epochs 155 --lrate 1e-3 --model_name resnet18
+
+python clfTrain.py --device cuda --num_classes 3 --radiomics_require False --match False --batch_size 64 --num_epochs 155 --lrate 1e-3 --model_name resnet34
+
+python clfTrain.py --device cuda --num_classes 3 --radiomics_require False --match False --batch_size 64 --num_epochs 155 --lrate 1e-3 --model_name resnet50
+
+python clfTrain.py --device cuda --num_classes 3 --radiomics_require False --match False --batch_size 64 --num_epochs 155 --lrate 1e-3 --model_name vgg
 ```
 
 #### 测试
+
 ```
- python clfTest.py --num_classes 3 --device cuda --pth output/saved_models/ClfBestModel.pth --batch_size 256 --radiomics_require False --test_data_dir ./data/process_clf/test --save_clf ./output/clfResult/
+python clfTest.py --num_classes 3 --device cuda --pth output/saved_models/ClfBestModel.pth --batch_size 256 --radiomics_require False --test_data_dir ./data/process_clf/test --save_clf ./output/clfResult/
+
+python clfTest.py --num_classes 3 --device cuda --pth output/saved_models/resnet18/epoch_150_model.pth --batch_size 256 --radiomics_require False --test_data_dir ./data/process_clf/test --save_clf ./output/clfResult/ --model_name resnet18
 ```
 
 #### ROC曲线与具体评测效果显示
@@ -68,6 +77,7 @@ python cmp2file.py
 ```
 
 #### log
+
 ```
 tensorboard --logdir='log/clf/resnet0607-1902'
 ```
@@ -78,7 +88,10 @@ tensorboard --logdir='log/clf/resnet0607-1902'
 python extendTest.py --num_classes 3 --device cuda --pth output/saved_models/ClfBestModel.pth --batch_size 1 --test_data_dir ./data/extend --save_clf ./output/clfResult/ --model_name resnet_ex
 ```
 
-
+#### 看学习率
+```
+/home/e201cv/.conda/envs/pt171/bin/python /home/e201cv/Desktop/COVID_prj/Code/covid_clf/watchLrate.py -m output/saved_models/resnet/epoch_140_model.pth
+```
 
 #### 性能指标
 

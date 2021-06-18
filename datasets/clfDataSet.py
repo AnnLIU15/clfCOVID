@@ -52,13 +52,14 @@ class clfDataSet(Dataset):
         imgs_name_ = self.imgs_name[idx]
         # acquire labels
         labels = int(imgs_name_[0])
-        if self.match:
-            radiomics_data = torch.FloatTensor(
-                np.load(self.radiomics_path[idx]))
-        else:
-            radiomics_data = torch.zeros(
-                size=(self.radiomics_feature[0], self.radiomics_feature[1])).squeeze().float()
-        return imgs_data, labels, radiomics_data, imgs_name_
+        # if self.match:
+        #     radiomics_data = torch.FloatTensor(
+        #         np.load(self.radiomics_path[idx]))
+        # else:
+        #     radiomics_data = torch.zeros(
+        #         size=(self.radiomics_feature[0], self.radiomics_feature[1])).squeeze().float()
+        return imgs_data, labels, imgs_name_
+        '''radiomics_data'''
 
     def __len__(self):
         return len(self.imgs_name)

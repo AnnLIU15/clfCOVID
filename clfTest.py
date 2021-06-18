@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 from clfConfig import getConfig
 from datasets.clfDataSet import clfDataSet
-from models.resnet import resnet18
+from models.resnet import resnet18,resnet34,resnet50
 from utils.Metrics import accuary_, confusion_matrix_, f1_score_, roc_auc
 
 
@@ -17,7 +17,7 @@ def test(model, test_loader, device, radiomics_require=False):
     labels_list = np.array([], dtype=np.uint8)
     argmax_output_list = np.array([], dtype=np.uint8)
     with torch.no_grad():
-        for idx, (imgs, labels, radiomics_data, _) in tqdm(enumerate(test_loader), desc='Train', total=len(test_loader)):
+        for idx, (imgs, labels, _) in tqdm(enumerate(test_loader), desc='Train', total=len(test_loader)):
             imgs, labels = imgs.to(device), labels.to(device)
             output = model(imgs)
 
@@ -80,7 +80,14 @@ def main(args):
     print('===>Setup Model')
     # model = EfficientNet(tf=1, in_channels=1,
     #                      num_class=num_classes).to(device)
-    model = resnet18(pretrained=False, num_classes=num_classes).to(device)
+    if model_name=='resnet34':
+        model = resnet34(pretrained=False, num_classes=num_classes).to(device)
+    elif model_name=='resnet50':
+        model = resnet50(pretrained=False, num_classes=num_classes).to(device) 
+    elif model_name=='vgg':
+        pass   
+    else:
+        model = resnet18(pretrained=False, num_classes=num_classes).to(device)
     # a = summary(model=model, input_size=(
     #     1, 512, 512), batch_size=4, device='cuda')
     # model=efficientnetv2_s(in_channels=1,num_classes=num_classes).to(device)

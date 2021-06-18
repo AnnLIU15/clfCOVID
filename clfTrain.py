@@ -13,13 +13,13 @@ from tqdm import tqdm
 
 from clfConfig import getConfig
 from datasets.clfDataSet import clfDataSet
-from models.resnet import resnet18
+from models.resnet import resnet18,resnet34,resnet50
 
 
 def train(model, train_loader, optimizer, device, radiomics_require=False):
     epoch_loss = 0
     model.train()
-    for idx, (imgs, labels, radiomics_data, _) in tqdm(enumerate(train_loader), desc='Train', total=len(train_loader)):
+    for idx, (imgs, labels, _) in tqdm(enumerate(train_loader), desc='Train', total=len(train_loader)):
         imgs, labels = imgs.to(device), labels.to(device)
         optimizer.zero_grad()
         predict_label = model(imgs)
@@ -37,7 +37,7 @@ def val(model, val_loader, device, radiomics_require=False):
     epoch_loss = 0
     model.eval()
     with torch.no_grad():
-        for idx, (imgs, labels, radiomics_data, _) in tqdm(enumerate(val_loader), desc='Train', total=len(val_loader)):
+        for idx, (imgs, labels, _) in tqdm(enumerate(val_loader), desc='Train', total=len(val_loader)):
             imgs, labels = imgs.to(device), labels.to(device)
             predict_label = model(imgs)
             loss = CrossEntropyLoss()(predict_label, labels)
@@ -78,9 +78,17 @@ def main(args):
     torch.cuda.manual_seed_all(0)
 
     print('===>Setup Model')
-    model = resnet18(pretrained=False, num_classes=num_classes).to(device)
-    summary(model=model, input_size=(
-        1, 512, 512), batch_size=4, device='cuda')
+    
+    if model_name=='resnet34':
+        model = resnet34(pretrained=False, num_classes=num_classes).to(device)
+    elif model_name=='resnet50':
+        model = resnet50(pretrained=False, num_classes=num_classes).to(device) 
+    elif model_name=='vgg':
+        pass   
+    else:
+        model = resnet18(pretrained=False, num_classes=num_classes).to(device)
+    # summary(model=model, input_size=(
+    #     1, 512, 512), batch_size=4, device='cuda')
 
     print('===>Setting optimizer and scheduler')
     optimizer = Adam(model.parameters(), lr=lrate, weight_decay=1e-3)
@@ -119,9 +127,9 @@ def main(args):
     best_train_performance = [0, np.Inf]
     best_val_performance = [0, np.Inf]
     train_start_time = time.time()
-    for epoch in range(start_epoch, start_epoch+num_epochs-1):
+    for epoch in range(start_epoch, start_epoch+num_epochs):
         epoch_begin_time = time.time()
-        print("\n"+"="*20+"Epoch[{}:{}]".format(epoch, start_epoch+num_epochs)+"="*20 +
+        print("\n"+"="*20+"Epoch[{}:{}]".format(epoch, start_epoch+num_epochs-1)+"="*20 +
               '\nlr={}\tweight_decay={}'.format(optimizer.state_dict()['param_groups'][0]['lr'],
                                                 optimizer.state_dict()['param_groups'][0]['weight_decay']))
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
