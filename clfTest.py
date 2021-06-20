@@ -10,6 +10,7 @@ from clfConfig import getConfig
 from datasets.clfDataSet import clfDataSet
 from models.resnet import resnet18,resnet34,resnet50
 from utils.Metrics import accuary_, confusion_matrix_, f1_score_, roc_auc
+from models.vgg import vgg11_bn,vgg19_bn
 
 
 def test(model, test_loader, device, radiomics_require=False):
@@ -84,8 +85,10 @@ def main(args):
         model = resnet34(pretrained=False, num_classes=num_classes).to(device)
     elif model_name=='resnet50':
         model = resnet50(pretrained=False, num_classes=num_classes).to(device) 
-    elif model_name=='vgg':
-        pass   
+    elif model_name=='vgg11':
+        model=vgg11_bn(pretrained=False, num_classes=num_classes).to(device) 
+    elif model_name=='vgg19':
+        model=vgg19_bn(pretrained=False, num_classes=num_classes).to(device)        
     else:
         model = resnet18(pretrained=False, num_classes=num_classes).to(device)
     # a = summary(model=model, input_size=(

@@ -53,13 +53,13 @@ python Radiomics/exact_radiomics.py --imgs_dir data/clf/train/imgs data/clf/val/
 #### 训练1
 
 ```
-python clfTrain.py --device cuda --num_classes 3 --radiomics_require False --match False --batch_size 64 --num_epochs 155 --lrate 1e-3 --model_name resnet18
+/home/e201cv/.conda/envs/pt171/bin/python --device cuda --num_classes 3 --radiomics_require False --match False --batch_size 64 --num_epochs 155 --lrate 1e-3 --model_name resnet18
 
-python clfTrain.py --device cuda --num_classes 3 --radiomics_require False --match False --batch_size 64 --num_epochs 155 --lrate 1e-3 --model_name resnet34
+/home/e201cv/.conda/envs/pt171/bin/python clfTrain.py --device cuda --num_classes 3 --radiomics_require False --match False --batch_size 32 --num_epochs 155 --lrate 1e-3 --model_name resnet34
 
-python clfTrain.py --device cuda --num_classes 3 --radiomics_require False --match False --batch_size 64 --num_epochs 155 --lrate 1e-3 --model_name resnet50
+/home/e201cv/.conda/envs/pt171/bin/python clfTrain.py --device cuda --num_classes 3 --radiomics_require False --match False --batch_size 16 --num_epochs 155 --lrate 1e-3 --model_name resnet50
 
-python clfTrain.py --device cuda --num_classes 3 --radiomics_require False --match False --batch_size 64 --num_epochs 155 --lrate 1e-3 --model_name vgg
+/home/e201cv/.conda/envs/pt171/bin/python clfTrain.py --device cuda --num_classes 3 --radiomics_require False --match False --batch_size 64 --num_epochs 155 --lrate 1e-3 --model_name vgg
 ```
 
 #### 测试
