@@ -59,7 +59,13 @@ python Radiomics/exact_radiomics.py --imgs_dir data/clf/train/imgs data/clf/val/
 
 /home/e201cv/.conda/envs/pt171/bin/python clfTrain.py --device cuda --num_classes 3 --radiomics_require False --match False --batch_size 16 --num_epochs 155 --lrate 1e-3 --model_name resnet50
 
+<<<<<<< HEAD
 /home/e201cv/.conda/envs/pt171/bin/python clfTrain.py --device cuda --num_classes 3 --radiomics_require False --match False --batch_size 64 --num_epochs 155 --lrate 1e-3 --model_name vgg
+=======
+/home/e201cv/.conda/envs/pt171/bin/python clfTrain.py --device cuda --num_classes 3 --radiomics_require False --match False --batch_size 64 --num_epochs 155 --lrate 1e-3 --model_name vgg11
+
+python clfTrain.py --device cuda --num_classes 3 --radiomics_require False --match False --batch_size 12 --num_epochs 80 --lrate 1e-3  --train_data_dir data/process_clf/train/ --val_data_dir data/process_clf/val/ --model_name vgg19
+>>>>>>> 81d5f74 (Ended)
 ```
 
 #### 测试
