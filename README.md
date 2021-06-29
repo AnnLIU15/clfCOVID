@@ -98,22 +98,3 @@ python extendTest.py --num_classes 3 --device cuda --pth output/saved_models/Clf
 ```
 /home/e201cv/.conda/envs/pt171/bin/python /home/e201cv/Desktop/COVID_prj/Code/covid_clf/watchLrate.py -m output/saved_models/resnet/epoch_140_model.pth
 ```
-
-#### 性能指标
-
-confusion matrix
-
-
-
-| Normal | 9381   | 68   | 1    |
-| ------ | ------ | ---- | ---- |
-| CP     | 50     | 7238 | 18   |
-| NCP    | 22     | 63   | 4261 |
-|        | Normal | CP   | NCP  |
-
-heatmap
-
-| 0.992 | 0.009 | 0.0002  |
-| ----- | ----- | ------- |
-| 0.005 | 0.982 | 0.0042  |
-| 0.002 | 0.008 | 0.99556 |
