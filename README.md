@@ -1,6 +1,6 @@
 # 新冠肺炎分类
 
-**Verion1.0 Author: ZhaoY**
+**Verion2.0 Author: ZhaoY**
 
 ## 运行环境
 
