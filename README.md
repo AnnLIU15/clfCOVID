@@ -45,11 +45,6 @@ python ./utils/preprocessClf.py --in_dir /home/e201cv/Desktop/covid_data/clf/tra
 python infer.py --infer_data_dirs /home/e201cv/Desktop/covid_data/process_clf/train /home/e201cv/Desktop/covid_data/process_clf/val /home/e201cv/Desktop/covid_data/process_clf/test --pth /home/e201cv/Desktop/covid_seg/output/saved_models/U2Net/bestSeg.pth --num_classes 3 --device cuda
 ```
 
-#### 获取影像组学
-```
-python Radiomics/exact_radiomics.py --imgs_dir data/clf/train/imgs data/clf/val/imgs data/clf/test/imgs --masks_dir data/clf/train/masks data/clf/val/masks data/clf/test/masks --out_dir data/clf/train/radiomics data/clf/val/radiomics data/clf/test/radiomics
-```
-
 #### 训练1
 
 ```
@@ -59,13 +54,9 @@ python Radiomics/exact_radiomics.py --imgs_dir data/clf/train/imgs data/clf/val/
 
 /home/e201cv/.conda/envs/pt171/bin/python clfTrain.py --device cuda --num_classes 3 --radiomics_require False --match False --batch_size 16 --num_epochs 155 --lrate 1e-3 --model_name resnet50
 
-<<<<<<< HEAD
-/home/e201cv/.conda/envs/pt171/bin/python clfTrain.py --device cuda --num_classes 3 --radiomics_require False --match False --batch_size 64 --num_epochs 155 --lrate 1e-3 --model_name vgg
-=======
 /home/e201cv/.conda/envs/pt171/bin/python clfTrain.py --device cuda --num_classes 3 --radiomics_require False --match False --batch_size 64 --num_epochs 155 --lrate 1e-3 --model_name vgg11
 
 python clfTrain.py --device cuda --num_classes 3 --radiomics_require False --match False --batch_size 12 --num_epochs 80 --lrate 1e-3  --train_data_dir data/process_clf/train/ --val_data_dir data/process_clf/val/ --model_name vgg19
->>>>>>> 81d5f74 (Ended)
 ```
 
 #### 测试
